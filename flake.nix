@@ -1,5 +1,5 @@
 {
-  description = "A collection of nifty utility functions";
+  description = "A collection of nix utility functions";
 
   inputs = {
     nixpkgs = {
