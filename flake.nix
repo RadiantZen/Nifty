@@ -34,6 +34,15 @@
         forAllSystems =
           function: nixpkgs.lib.genAttrs (import systems) (system: function nixpkgs.legacyPackages.${system});
         treefmtEval = self.lib.forAllSystems (pkgs: inputs.treefmt-nix.lib.evalModule pkgs ./treefmt.nix);
+        listNixModules =
+          path:
+          builtins.map (f: ./${f}) (
+            builtins.attrNames (
+              nixpkgs.lib.filterAttrs (n: v: nixpkgs.lib.hasSuffix ".nix" n || v == "directory") (
+                builtins.readDir path
+              )
+            )
+          );
         matchFilesRecursive =
           path: condition:
           nixpkgs.lib.filter (f: condition f) (nixpkgs.lib.filesystem.listFilesRecursive path);
