@@ -34,23 +34,12 @@
         forAllSystems =
           function: nixpkgs.lib.genAttrs (import systems) (system: function nixpkgs.legacyPackages.${system});
         treefmtEval = self.lib.forAllSystems (pkgs: inputs.treefmt-nix.lib.evalModule pkgs ./treefmt.nix);
-        # TODO Recursion Depth
-        # TODO Refactor to listFilesRecursive path, suffix:
-        listNixFilesRecursive =
-          path:
-          nixpkgs.lib.filter (f: nixpkgs.lib.hasSuffix ".nix" f) (
-            nixpkgs.lib.filesystem.listFilesRecursive path
-          );
-        listNonNixFilesRecursive =
-          path:
-          nixpkgs.lib.filter (f: !nixpkgs.lib.hasSuffix ".nix" f) (
-            nixpkgs.lib.filesystem.listFilesRecursive path
-          );
-        listDefaultNixFilesRecursive =
-          path:
-          nixpkgs.lib.filter (f: nixpkgs.lib.hasSuffix "default.nix" f) (
-            nixpkgs.lib.filesystem.listFilesRecursive path
-          );
+        matchFilesRecursive =
+          path: condition:
+          nixpkgs.lib.filter (f: condition f) (nixpkgs.lib.filesystem.listFilesRecursive path);
+        excludeFilesRecursive =
+          path: condition:
+          nixpkgs.lib.filter (f: !condition f) (nixpkgs.lib.filesystem.listFilesRecursive path);
       };
     };
 }
