@@ -36,10 +36,12 @@
         treefmtEval = self.lib.forAllSystems (pkgs: inputs.treefmt-nix.lib.evalModule pkgs ./treefmt.nix);
         listNixModules =
           path:
-          builtins.map (f: ./${f}) (
-            builtins.attrNames (
-              nixpkgs.lib.filterAttrs (n: v: nixpkgs.lib.hasSuffix ".nix" n || v == "directory") (
-                builtins.readDir path
+          builtins.map (f: path + f) (
+            builtins.map (f: "/" + f) (
+              builtins.attrNames (
+                nixpkgs.lib.filterAttrs (n: v: nixpkgs.lib.hasSuffix ".nix" n || v == "directory") (
+                  builtins.readDir path
+                )
               )
             )
           );
